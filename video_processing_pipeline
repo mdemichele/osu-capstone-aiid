@@ -1,0 +1,32 @@
+import webbrowser
+temp = {}
+
+def check_submission_type():
+
+  good_links = []
+  bad_links = []
+  if submission.containsVideoLink == True:
+    for link in submission.media:
+
+
+      validate_link(link)
+      if validate_link(link) == 0:
+        good_links.append(link)
+      else:
+        bad_links.append(link)
+
+
+  else:
+    # Find out how to use S3 bucket and tie submission UID with raw mp4 file format.
+
+def validate_link(vid_link):
+  # put comprehensive list of error codes here
+  error_codes = [400, 401, 404, 503]
+
+  # might need to look for OS dependency instead of additional plugin.
+  webbrowser.open(vid_link)
+    if webbrowseerror:
+      return 1
+    else
+      return 0
+

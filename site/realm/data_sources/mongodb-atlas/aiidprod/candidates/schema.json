@@ -70,6 +70,21 @@
         },
         "url": {
             "bsonType": "string"
+        },
+        "is_deepfake": {
+            "bsonType": "boolean"
+        },
+        "is_deepfake": {
+            "bsonType": "boolean"
+        },
+        "contains_media": {
+            "bsonType": "boolean"
+        },
+        "media_links": {
+            "bsonType": "array"
+        },
+        "s3_bucket_pointer": {
+            "bsonType": "string"
         }
     },
     "required": [
