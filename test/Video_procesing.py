@@ -11,6 +11,8 @@ from selenium.webdriver.common.keys import Keys
 import time
 from random import randint
 
+global randomized_vid
+randomized_vid = {}
 
 def process_Entry(target_url, target_submissionID):
 
@@ -142,11 +144,17 @@ def convert_video(url):
 
     return True
 
-
 def randomize():
-    range_start = 10 ** (0)
-    range_end = (10 ** 5) - 1
-    return randint(range_start, range_end)
+    while(True):
+        range_start = 10 ** (0)
+        range_end = (10 ** 5) - 1
+        temp = randint(range_start, range_end)
+        global randomized_vid
+        if temp not in randomized_vid:
+            randomized_vid[temp] = 1
+            return temp
+        else:
+            continue
 
 
 #def error_handler(url, submissionID):
