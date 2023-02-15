@@ -1,0 +1,138 @@
+html {
+    background: #e6e9e9;
+    background-image: linear-gradient(270deg, rgb(230, 233, 233) 0%, rgb(216, 221, 221) 100%);
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background: #fff;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.06);
+    color: #545454;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 2em 2em 4em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #222;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h2 {
+    margin-top: 1.3em;
+}
+
+a {
+    color: #0083e8;
+}
+
+b, strong {
+    font-weight: 600;
+}
+
+samp {
+    display: none;
+}
+
+
+@keyframes colorize {
+    0% {
+        -webkit-filter: grayscale(100%);
+        filter: grayscale(100%);
+    }
+    100% {
+        -webkit-filter: grayscale(0%);
+        filter: grayscale(0%);
+    }
+}
+
+#devInfo{
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    background-color: white;
+    box-shadow: 2px 2px 20px #DCDCDC;
+}
+
+#tester{
+    margin: 0 auto;
+    text-align: center;
+    font-weight: bold;
+    width: 100%;
+    background-color: white;
+    box-shadow: 2px 2px 20px #DCDCDC;
+    border: 1px solid #DCDCDC;
+    border-radius: 10px;
+}
+
+.deepfakeCard{
+    border: 1px solid #DCDCDC;
+    box-shadow: 2px 2px 20px #DCDCDC;
+    cursor: pointer;
+    display: inline-block;
+    margin: 5px 5px 10px 5px;
+    max-width: 250px;
+    min-width: 200px;
+    min-height: 400px;
+    text-align: left;
+}
+
+.cardMedia{
+    background-color: none;
+    margin: 0px;
+    text-align: center;
+    width: 100%;
+}
+
+.cardMedia img{
+    width: 100%;
+}
+
+.cardTitle{
+    font-size: 90%;
+    font-weight: 700;
+    padding: 1px 5px 0px 5px;
+    text-align: left;
+}
+
+.cardDescription{
+    font-size: 80%;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.cardStatus{
+    border-top: 2px solid #787878;
+    height: 40px;
+    padding: 5px 0px 0px 0px;
+    text-align: center;
+}
+
+.cardStatus span{
+    background-color: green;
+    border-radius: 3px;
+    color: white;
+    font-weight: 700;
+    padding: 1px 15px 1px 15px;
+    top: 50%;
+}
+
+.cardLocation{
+    font-size: 80%;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.cardBottom{
+    background-color: #000000;
+    color: white;
+    font-weight: bold;
+    font-size: 80%;
+    min-height: 20px;
+    text-align: center;
+}
