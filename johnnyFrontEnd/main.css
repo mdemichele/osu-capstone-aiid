@@ -101,9 +101,13 @@ samp {
 }
 
 .cardDescription{
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 12;
+    -webkit-box-orient: vertical;
     font-size: 80%;
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 0 10px 0 10px;
 }
 
 .cardStatus{

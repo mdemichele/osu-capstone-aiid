@@ -11,7 +11,7 @@
             var sampleDisplayMedia = "<img src='images/mediaSample.png'/>";
             var sampleTitle = "How a deepfake Tom Cruise on TikTok turned into a very real AI company";
             
-            var sampleDescription = "Despite the movie star hair, the eye-squinting and that trademark teeth-baring cackle, it wasn’t really Cruise. The 10 videos, which were posted between February and June, featured an artificial intelligence-generated doppelganger meant to look and sound like him. The deepfakes — a combination of the terms “deep learning” and “fake” — were created by visual and AI effects artist Chris Umé with the help of a Cruise stand-in, actor Miles Fisher.This ersatz Cruise was...";
+            var sampleDescription = "Despite the movie star hair, the eye-squinting and that trademark teeth-baring cackle, it wasn’t really Cruise. The 10 videos, which were posted between February and June, featured an artificial intelligence-generated doppelganger meant to look and sound like him. The deepfakes — a combination of the terms “deep learning” and “fake” — were created by visual and AI effects artist Chris Umé with the help of a Cruise stand-in, actor Miles Fisher.This ersatz Cruise was Despite the movie star hair, the eye-squinting and that trademark";
             
             var sampleStatus = "verified";
             var sampleLocation = "United States";
@@ -105,7 +105,7 @@
                 //for testing
                 get allFields(){
                     return this.encDiv(
-                    "id: "+this.id+
+                    " id: "+this.id+
                     " media: "+this.displayMedia+
                     " title: "+this.title+
                     " <br/> description: "+this.description+
@@ -121,14 +121,32 @@
             }
             
             function testFunc(){
-                var df = new DeepfakeCard({id: sampleId, displayMedia: sampleDisplayMedia, title: sampleTitle, description: sampleDescription, status: sampleStatus, location:sampleLocation});
+                var df = new DeepfakeCard({
+                    id: sampleId, 
+                    displayMedia: sampleDisplayMedia, 
+                    title: sampleTitle, 
+                    description: sampleDescription, 
+                    status: sampleStatus, 
+                    location:sampleLocation});
+
+                var dh = new DeepfakeCard({
+                    id: sampleId, 
+                    displayMedia: "<img src='images/mediaSample2.png'/>", 
+                    title: sampleTitle, 
+                    description: sampleDescription, 
+                    status: sampleStatus, 
+                    location:sampleLocation});
+
                 
                 var dfh = new DeepfakeCardHandler();
-                var n = 1;
+                var n = 2;
                 
                 for(let i=0; i < n; i++){
                     dfh.addCard(df);
                 }
+
+                dfh.addCard(dh);
+
                 document.write(dfh.allCards);
             }
         </script>
