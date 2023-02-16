@@ -1,11 +1,15 @@
 #Imports
+import os
 
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 import requests
 import re
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
+
+chromeOptions = webdriver.ChromeOptions()
+prefs = {"download.default_directory" : r"C:\pvid_stream_vids"}
+chromeOptions.add_experimental_option("prefs", prefs)
+driver = webdriver.Chrome(options=chromeOptions)
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
@@ -52,11 +56,6 @@ def convert_video(url):
 
     #4 Main types of links to handle: Streamable, Vimeo, Youtube, Twitter
 
-    options = webdriver.ChromeOptions()
-    prefs = {"download.default_directory" : "C:\pvid_stream_vids"}
-    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
-    options.add_experimental_option("prefs", prefs);
-
     if re.search("twitter.com", url):
         converter = 'https://ssstwitter.com/'
         driver.get(converter)
@@ -72,12 +71,8 @@ def convert_video(url):
         time.sleep(3)
         driver.close()
 
-        file_to_save = "vid"
-        file_to_save = file_to_save + str(randomize()) + ".mp4"
+        append_and_convert(download_url)
 
-        resp = requests.get(download_url)
-        with open(file_to_save, "wb") as f:
-            f.write(resp.content)
 
     elif re.search("vimeo.com", url):
         converter = 'https://vimeo-downloader.com/'
@@ -94,12 +89,7 @@ def convert_video(url):
         time.sleep(3)
         driver.close()
 
-        file_to_save = "vid"
-        file_to_save = file_to_save + str(randomize()) + ".mp4"
-
-        resp = requests.get(download_url)
-        with open(file_to_save, "wb") as f:
-            f.write(resp.content)
+        append_and_convert(download_url)
 
     elif re.search("streamable", url):
         converter = 'https://streamabledl.com/'
@@ -116,9 +106,8 @@ def convert_video(url):
         download_button.click()
 
         # allow for download to finish in 1 min or auto exit.
-        time.sleep(60)
+        time.sleep(30)
         driver.close()
-
 
     elif re.search("youtube", url):
         converter = 'https://wave.video/convert/youtube-to-mp4'
@@ -134,15 +123,23 @@ def convert_video(url):
         download_button = driver.find_element(By.CSS_SELECTOR, ".b0kwwh-0.dkrhAU.uxhyop-2.TPBMx")
         download_button.click()
 
-        time.sleep(60)
+        time.sleep(30)
         driver.close()
-
 
     else:
         return "The following URL cannot be converted or may not have existing support to allow for conversion"
 
-
     return True
+
+def append_and_convert(donwload_url):
+    file_to_save = "vid"
+    file_to_save = file_to_save + str(randomize()) + ".mp4"
+
+    resp = requests.get(donwload_url)
+    os.chdir(r"C:\pvid_stream_vids")
+    with open(file_to_save, "wb") as f:
+        f.write(resp.content)
+        f.close()
 
 def randomize():
     while(True):
@@ -156,11 +153,10 @@ def randomize():
         else:
             continue
 
-
 #def error_handler(url, submissionID):
 
-#print(process_Entry('https://vimeo.com/735201', 1))
+print(process_Entry('https://vimeo.com/735201', 1))
 #print(process_Entry('https://twitter.com/i/status/1617131075506946050', 2))
 #print(process_Entry('https://streamable.com/hv0o8i', 3))
-print(process_Entry('https://www.youtube.com/watch?v=6Wlng1gEFuI', 4))
+#print(process_Entry('https://www.youtube.com/watch?v=6Wlng1gEFuI', 4))
 
