@@ -1,19 +1,21 @@
 #Imports
 import os
-
 import requests
 import re
+import time
+from random import randint
+from moviepy.editor import VideoFileClip
+
+
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 chromeOptions = webdriver.ChromeOptions()
 prefs = {"download.default_directory" : r"C:\pvid_stream_vids"}
 chromeOptions.add_experimental_option("prefs", prefs)
-driver = webdriver.Chrome(options=chromeOptions)
-
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import time
-from random import randint
+driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
 
 global randomized_vid
 randomized_vid = {}
@@ -72,6 +74,7 @@ def convert_video(url):
         driver.close()
 
         append_and_convert(download_url)
+        check_requirements()
 
 
     elif re.search("vimeo.com", url):
@@ -90,6 +93,7 @@ def convert_video(url):
         driver.close()
 
         append_and_convert(download_url)
+        check_requirements()
 
     elif re.search("streamable", url):
         converter = 'https://streamabledl.com/'
@@ -105,9 +109,11 @@ def convert_video(url):
         download_button = driver.find_element(By.CSS_SELECTOR, ".uk-button.uk-button-large")
         download_button.click()
 
-        # allow for download to finish in 1 min or auto exit.
-        time.sleep(30)
+        # allow for download to finish in 15s or auto exit.
+        time.sleep(15)
         driver.close()
+
+        check_requirements()
 
     elif re.search("youtube", url):
         converter = 'https://wave.video/convert/youtube-to-mp4'
@@ -123,8 +129,10 @@ def convert_video(url):
         download_button = driver.find_element(By.CSS_SELECTOR, ".b0kwwh-0.dkrhAU.uxhyop-2.TPBMx")
         download_button.click()
 
-        time.sleep(30)
+        time.sleep(15)
         driver.close()
+
+        check_requirements()
 
     else:
         return "The following URL cannot be converted or may not have existing support to allow for conversion"
@@ -141,6 +149,29 @@ def append_and_convert(donwload_url):
         f.write(resp.content)
         f.close()
 
+def check_requirements():
+    os.chdir(r"C:\pvid_stream_vids")
+    list_of_files = os.listdir()
+    latest_file = max(list_of_files, key=os.path.getctime)
+
+    # Video size is greater than 250MB (250000000 bytes)
+    if os.path.getsize(latest_file) > 250000000:
+        os.remove(latest_file)
+        print("The current file size (", os.path.getsize(latest_file), ") is greater than 250MB  and cannot be processed.")
+        return
+
+    clip = VideoFileClip(latest_file)
+    duration = clip.duration
+    clip.close()
+
+    if duration > 150:
+        os.remove(latest_file)
+        print("The current video duration (", duration, ") is greater than 150 seconds and cannot be processed.")
+        return
+
+    print("Your video", latest_file, "has been successfully verified!")
+
+
 def randomize():
     while(True):
         range_start = 10 ** (0)
@@ -155,7 +186,7 @@ def randomize():
 
 #def error_handler(url, submissionID):
 
-print(process_Entry('https://vimeo.com/735201', 1))
+#print(process_Entry('https://vimeo.com/735201', 1))
 #print(process_Entry('https://twitter.com/i/status/1617131075506946050', 2))
 #print(process_Entry('https://streamable.com/hv0o8i', 3))
 #print(process_Entry('https://www.youtube.com/watch?v=6Wlng1gEFuI', 4))
