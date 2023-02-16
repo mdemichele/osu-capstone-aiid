@@ -1,4 +1,4 @@
-#Imports
+# Imports
 import os
 import requests
 import re
@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 chromeOptions = webdriver.ChromeOptions()
-prefs = {"download.default_directory" : r"C:\pvid_stream_vids"}
+prefs = {"download.default_directory": r"C:\pvid_stream_vids"}
 chromeOptions.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
 
@@ -54,90 +54,88 @@ def validate_url(url):
     except requests.exceptions.RequestException as e:
         return f"{url}: is Not reachable \nErr: {e}"
 
+
 def convert_video(url):
 
-    #4 Main types of links to handle: Streamable, Vimeo, Youtube, Twitter
+    # 4 Main types of links to handle: Streamable, Vimeo, Youtube, Twitter
 
     if re.search("twitter.com", url):
         converter = 'https://ssstwitter.com/'
-        driver.get(converter)
-        driver.maximize_window()
+        search_input = "form-control"
+        download_button = ".pure-button.pure-button-primary.is-center.u-bl.dl-button.download_link.without_watermark.vignette_active"
+        yt_flag = 0
+        href_flag = 1
+        close_sleep_time = 3
 
-        search_input = driver.find_element(By.CLASS_NAME, "form-control")
-        search_input.send_keys(url)
-        time.sleep(5)
-        search_input.send_keys(Keys.ENTER)
-        time.sleep(5)
-
-        download_url = driver.find_element(By.CSS_SELECTOR, ".pure-button.pure-button-primary.is-center.u-bl.dl-button.download_link.without_watermark.vignette_active").get_attribute("href")
-        time.sleep(3)
-        driver.close()
-
-        append_and_convert(download_url)
+        process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
         check_requirements()
 
 
     elif re.search("vimeo.com", url):
         converter = 'https://vimeo-downloader.com/'
-        driver.get(converter)
-        driver.maximize_window()
+        search_input = "form-control"
+        download_button = ".btn.btn-danger.btn-lg.py-3.my-3.mx-1.d-inline-block.d-lg-block"
+        yt_flag = 0
+        href_flag = 1
+        close_sleep_time = 3
 
-        search_input = driver.find_element(By.CLASS_NAME,"form-control")
-        search_input.send_keys(url)
-        time.sleep(5)
-        search_input.send_keys(Keys.ENTER)
-        time.sleep(5)
-
-        download_url = driver.find_element(By.CSS_SELECTOR, ".btn.btn-danger.btn-lg.py-3.my-3.mx-1.d-inline-block.d-lg-block").get_attribute("href")
-        time.sleep(3)
-        driver.close()
-
-        append_and_convert(download_url)
+        process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
         check_requirements()
 
     elif re.search("streamable", url):
         converter = 'https://streamabledl.com/'
-        driver.get(converter)
-        driver.maximize_window()
+        search_input = "uk-input"
+        download_button = ".uk-button.uk-button-large"
+        yt_flag = 0
+        href_flag = 0
+        close_sleep_time = 15
 
-        search_input = driver.find_element(By.CLASS_NAME, "uk-input")
-        search_input.send_keys(url)
-        time.sleep(5)
-        search_input.send_keys(Keys.ENTER)
-        time.sleep(5)
-
-        download_button = driver.find_element(By.CSS_SELECTOR, ".uk-button.uk-button-large")
-        download_button.click()
-
-        # allow for download to finish in 15s or auto exit.
-        time.sleep(15)
-        driver.close()
-
+        process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
         check_requirements()
+
 
     elif re.search("youtube", url):
         converter = 'https://wave.video/convert/youtube-to-mp4'
-        driver.get(converter)
-        driver.maximize_window()
+        search_input = '.sc-8b4b6g-0.beiuBq'
+        download_button = ".b0kwwh-0.dkrhAU.uxhyop-2.TPBMx"
+        yt_flag = 1
+        href_flag = 0
+        close_sleep_time = 15
 
-        search_input = driver.find_element(By.CSS_SELECTOR, ".sc-8b4b6g-0.beiuBq")
-        search_input.send_keys(url)
-        time.sleep(5)
-        search_input.send_keys(Keys.ENTER)
-        time.sleep(5)
-
-        download_button = driver.find_element(By.CSS_SELECTOR, ".b0kwwh-0.dkrhAU.uxhyop-2.TPBMx")
-        download_button.click()
-
-        time.sleep(15)
-        driver.close()
-
+        process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
         check_requirements()
 
     else:
         return "The following URL cannot be converted or may not have existing support to allow for conversion"
 
     return True
+
+def process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time):
+    driver.get(converter)
+    driver.maximize_window()
+
+    if yt_flag == 1:
+        search_input = driver.find_element(By.CSS_SELECTOR, search_input)
+
+    else:
+        search_input = driver.find_element(By.CLASS_NAME, search_input)
+
+    search_input.send_keys(url)
+    time.sleep(5)
+    search_input.send_keys(Keys.ENTER)
+    time.sleep(5)
+
+    if href_flag == 1:
+        download_url = driver.find_element(By.CSS_SELECTOR, download_button).get_attribute("href")
+        time.sleep(close_sleep_time)
+        driver.close()
+        append_and_convert(download_url)
+
+    else:
+        download_button = driver.find_element(By.CSS_SELECTOR, download_button)
+        download_button.click()
+        time.sleep(close_sleep_time)
+        driver.close()
 
 def append_and_convert(donwload_url):
     file_to_save = "vid"
@@ -148,6 +146,7 @@ def append_and_convert(donwload_url):
     with open(file_to_save, "wb") as f:
         f.write(resp.content)
         f.close()
+
 
 def check_requirements():
     os.chdir(r"C:\pvid_stream_vids")
@@ -164,6 +163,8 @@ def check_requirements():
     duration = clip.duration
     clip.close()
 
+    # Duration must be less than 2 mins and 30 seconds
+
     if duration > 150:
         os.remove(latest_file)
         print("The current video duration (", duration, ") is greater than 150 seconds and cannot be processed.")
@@ -173,8 +174,8 @@ def check_requirements():
 
 
 def randomize():
-    while(True):
-        range_start = 10 ** (0)
+    while True:
+        range_start = 10 ** 0
         range_end = (10 ** 5) - 1
         temp = randint(range_start, range_end)
         global randomized_vid
@@ -184,10 +185,12 @@ def randomize():
         else:
             continue
 
-#def error_handler(url, submissionID):
+# def error_handler(url, submissionID):
 
-#print(process_Entry('https://vimeo.com/735201', 1))
-#print(process_Entry('https://twitter.com/i/status/1617131075506946050', 2))
-#print(process_Entry('https://streamable.com/hv0o8i', 3))
-#print(process_Entry('https://www.youtube.com/watch?v=6Wlng1gEFuI', 4))
 
+# Test Cases
+
+# print(process_Entry('https://vimeo.com/735201', 1))
+# print(process_Entry('https://twitter.com/i/status/1617131075506946050', 2))
+# print(process_Entry('https://streamable.com/hv0o8i', 3))
+print(process_Entry('https://www.youtube.com/watch?v=6Wlng1gEFuI', 4))
