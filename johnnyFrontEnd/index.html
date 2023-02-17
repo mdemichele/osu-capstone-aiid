@@ -49,7 +49,12 @@
             
             class DeepfakeCard{
                 
-                constructor({id="undefined",displayMedia="none", title="none", description="undefined", status="none", location="undefined"}= {}){
+                constructor({id="undefined",
+                    displayMedia="none", 
+                    title="none", 
+                    description="undefined", 
+                    status="none", 
+                    location="undefined",}= {}){
                     
                     this.id = id;
                     this.displayMedia = displayMedia;
@@ -121,7 +126,7 @@
             }
             
             function testFunc(){
-                var df = new DeepfakeCard({
+                var card1 = new DeepfakeCard({
                     id: sampleId, 
                     displayMedia: sampleDisplayMedia, 
                     title: sampleTitle, 
@@ -129,7 +134,7 @@
                     status: sampleStatus, 
                     location:sampleLocation});
 
-                var dh = new DeepfakeCard({
+                var card2 = new DeepfakeCard({
                     id: sampleId, 
                     displayMedia: "<img src='images/mediaSample2.png'/>", 
                     title: sampleTitle, 
@@ -138,16 +143,16 @@
                     location:sampleLocation});
 
                 
-                var dfh = new DeepfakeCardHandler();
-                var n = 2;
+                var cardHolder = new DeepfakeCardHandler();
+                var n = 3;
                 
                 for(let i=0; i < n; i++){
-                    dfh.addCard(df);
+                    cardHolder.addCard(card1);
                 }
 
-                dfh.addCard(dh);
+                cardHolder.addCard(card2);
 
-                document.write(dfh.allCards);
+                document.write(cardHolder.allCards);
             }
         </script>
     </head>
@@ -157,7 +162,7 @@
         </div>
         <div id='mainContent'>
             <script>
-                testFunc();
+                testFunc()
             </script>
         </div>
         <div id="devInfo">
