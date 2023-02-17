@@ -1,10 +1,11 @@
 import EntitiesTable from 'components/entities/EntitiesTable';
-import LayoutHideSidebar from 'components/LayoutHideSidebar';
 import Container from 'elements/Container';
 import { graphql } from 'gatsby';
 import React, { useMemo } from 'react';
-import { Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { makeEntitiesHash, makeIncidentsHash } from 'utils/entities';
+import AiidHelmet from 'components/AiidHelmet';
+import Layout from 'components/Layout';
 
 const incidentFields = [
   'incidentsAsBoth',
@@ -16,6 +17,8 @@ const incidentFields = [
 const entitiesFields = ['relatedEntities'];
 
 const EntitiesPage = ({ pageContext, data, ...props }) => {
+  const { t } = useTranslation(['entities']);
+
   const { entities } = pageContext;
 
   const { incidents } = data;
@@ -47,15 +50,25 @@ const EntitiesPage = ({ pageContext, data, ...props }) => {
     [incidentsHash, entitiesHash]
   );
 
+  const metaTitle = t('Entities');
+
   return (
-    <LayoutHideSidebar {...props}>
-      <Container className="tw-container-xl mt-6">
-        <h1 className="text-5xl mt-6 font-extrabold dark:text-white">
-          <Trans ns="entities">Entities</Trans>
-        </h1>
-        <EntitiesTable data={entitiesData} className="mt-6" data-cy="entities" />
-      </Container>
-    </LayoutHideSidebar>
+    <>
+      <AiidHelmet
+        {...{
+          metaTitle,
+          metaDescription: t('Entities involved in AI Incidents'),
+          canonicalUrl: 'https://incidentdatabase.ai/entities',
+          path: props.location.pathname,
+        }}
+      />
+      <Layout {...props} sidebarCollapsed={true}>
+        <Container className="ml-auto mr-auto pl-3 pr-3 w-full lg:max-w-6xl xl:max-w-7xl mt-6">
+          <h1 className="text-5xl mt-6 font-extrabold dark:text-white">{t(metaTitle)}</h1>
+          <EntitiesTable data={entitiesData} className="mt-6" data-cy="entities" />
+        </Container>
+      </Layout>
+    </>
   );
 };
 

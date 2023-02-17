@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import AiidHelmet from '../../components/AiidHelmet';
-import LayoutHideSidebar from '../../components/LayoutHideSidebar';
 import { format } from 'date-fns';
 import Link from '../../components/ui/Link';
 import { StyledHeading } from '../../components/styles/Docs';
@@ -10,9 +9,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import { useTable, useFilters, usePagination, useSortBy } from 'react-table';
 import { Table, InputGroup, FormControl, Form, Button } from 'react-bootstrap';
-import { Spinner } from 'flowbite-react';
 import { gql, useQuery } from '@apollo/client';
-import { Trans } from 'react-i18next';
+import Layout from 'components/Layout';
+import { useMenuContext } from 'contexts/MenuContext';
+import ListSkeleton from 'elements/Skeletons/List';
 
 const TableStyles = styled.div`
   padding: 1rem 1rem 1rem 0;
@@ -206,7 +206,9 @@ const SelectDatePickerFilter = ({
 
   const handleApply = (event, picker) => {
     picker.element.val(
-      picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY')
+      format(picker.startDate.toDate(), 'yyyy-MM-dd') +
+        ' - ' +
+        format(picker.endDate.toDate(), 'yyyy-MM-dd')
     );
     setFilter([picker.startDate.valueOf() / 1000, picker.endDate.valueOf() / 1000]);
   };
@@ -256,8 +258,6 @@ const query = gql`
 
 export default function Incidents(props) {
   const [tableData, setTableData] = useState([]);
-
-  const [collapse, setCollapse] = useState(true);
 
   const [columnData, setColumnData] = useState([]);
 
@@ -358,7 +358,7 @@ export default function Incidents(props) {
   }, [data]);
 
   const formatDateField = (s) => {
-    return <>{format(new Date(s.props.cell.value * 1000), 'MMM d, yyyy')}</>;
+    return <>{format(new Date(s.props.cell.value * 1000), 'yyyy-MM-dd')}</>;
   };
 
   const formatIncidentIdField = (i) => {
@@ -386,7 +386,9 @@ export default function Incidents(props) {
 
     const end = filterValue[1];
 
-    return rows.filter((val) => val.original[id] >= start && val.original[id] <= end);
+    return rows.filter((val) => {
+      return val.original[id] >= start && val.original[id] <= end;
+    });
   };
 
   const filterTypes = {
@@ -442,25 +444,18 @@ export default function Incidents(props) {
     }
   };
 
+  const { isCollapsed } = useMenuContext();
+
   return (
-    <LayoutHideSidebar
-      {...props}
-      menuCollapseCallback={(collapseFlag) => setCollapse(collapseFlag)}
-      className="bootstrap"
-    >
-      <AiidHelmet>
+    <Layout {...props} sidebarCollapsed={true}>
+      <AiidHelmet path={props.location.pathname}>
         <title>Incident List</title>
       </AiidHelmet>
 
-      {loading && (
-        <div className="p-4 flex justify-center align-items-center gap-2">
-          <Spinner />
-          <Trans>Fetching Reports...</Trans>
-        </div>
-      )}
+      {loading && <ListSkeleton />}
 
       {!loading && (
-        <Container isWide={collapse}>
+        <Container isWide={isCollapsed} className="bootstrap">
           <StyledHeading>Incident Report Table</StyledHeading>
           <Button onClick={() => setAllFilters([])}>Reset filters</Button>
           <TableStyles>
@@ -601,6 +596,6 @@ export default function Incidents(props) {
           </TableStyles>
         </Container>
       )}
-    </LayoutHideSidebar>
+    </Layout>
   );
 }
