@@ -6,39 +6,31 @@ import time
 from random import randint
 from moviepy.editor import VideoFileClip
 
-
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-chromeOptions = webdriver.ChromeOptions()
-prefs = {"download.default_directory": r"C:\pvid_stream_vids"}
-chromeOptions.add_experimental_option("prefs", prefs)
-driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
-
 global randomized_vid
 randomized_vid = {}
+
+global reference_table
+reference_table = {}
 
 def process_Entry(target_url, target_submissionID):
 
     url = target_url
     submissionID = target_submissionID
 
-    table = {}
-    table[submissionID] = "Placeholder"
+    reference_table[submissionID] = "Placeholder"
+
+    # Update Reference Table
 
     if validate_url(url) == True:
-        print(f"Video with url: {url} was successfully verified")
-
-        if convert_video(url) == True:
-            print("Finished")
-        else:
-            table[submissionID] = convert_video(url)
+        reference_table[submissionID] = convert_video(url)
 
     else:
-        # Update mock s3 bucket with failure condition
-        table[submissionID] = validate_url(url)
+        reference_table[submissionID] = validate_url(url)
 
 def validate_url(url):
 
@@ -68,7 +60,7 @@ def convert_video(url):
         close_sleep_time = 3
 
         process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
-        check_requirements()
+        return check_requirements()
 
 
     elif re.search("vimeo.com", url):
@@ -80,7 +72,8 @@ def convert_video(url):
         close_sleep_time = 3
 
         process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
-        check_requirements()
+        return check_requirements()
+
 
     elif re.search("streamable", url):
         converter = 'https://streamabledl.com/'
@@ -91,7 +84,7 @@ def convert_video(url):
         close_sleep_time = 15
 
         process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
-        check_requirements()
+        return check_requirements()
 
 
     elif re.search("youtube", url):
@@ -103,14 +96,18 @@ def convert_video(url):
         close_sleep_time = 15
 
         process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time)
-        check_requirements()
+        return check_requirements()
 
     else:
         return "The following URL cannot be converted or may not have existing support to allow for conversion"
 
-    return True
 
 def process_video(url, converter, search_input, download_button, yt_flag, href_flag, close_sleep_time):
+    chromeOptions = webdriver.ChromeOptions()
+    prefs = {"download.default_directory": r"C:\pvid_stream_vids"}
+    chromeOptions.add_experimental_option("prefs", prefs)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chromeOptions)
+
     driver.get(converter)
     driver.maximize_window()
 
@@ -149,15 +146,15 @@ def append_and_convert(donwload_url):
 
 
 def check_requirements():
-    os.chdir(r"C:\pvid_stream_vids")
+    base_path = r"C:\pvid_stream_vids"
+    os.chdir(base_path)
     list_of_files = os.listdir()
     latest_file = max(list_of_files, key=os.path.getctime)
 
     # Video size is greater than 250MB (250000000 bytes)
     if os.path.getsize(latest_file) > 250000000:
         os.remove(latest_file)
-        print("The current file size (", os.path.getsize(latest_file), ") is greater than 250MB  and cannot be processed.")
-        return
+        return "The current file size (" + str(os.path.getsize(latest_file)/1000000) + "mbs)" + "is greater than 250MB  and cannot be processed."
 
     clip = VideoFileClip(latest_file)
     duration = clip.duration
@@ -167,11 +164,12 @@ def check_requirements():
 
     if duration > 150:
         os.remove(latest_file)
-        print("The current video duration (", duration, ") is greater than 150 seconds and cannot be processed.")
-        return
+        return "The current video duration (" + str(duration) + "s) " + "is greater than 150 seconds and cannot be processed."
 
-    print("Your video", latest_file, "has been successfully verified!")
+    print("Your video " + latest_file + "has been successfully verified!")
 
+    ref_path = os.path.join(base_path + latest_file)
+    return ref_path
 
 def randomize():
     while True:
@@ -185,12 +183,33 @@ def randomize():
         else:
             continue
 
-# def error_handler(url, submissionID):
-
+def lookup_result(submissionID):
+    print("Looking up table for submissionID: " + str(submissionID))
+    return reference_table[submissionID]
 
 # Test Cases
 
-# print(process_Entry('https://vimeo.com/735201', 1))
-# print(process_Entry('https://twitter.com/i/status/1617131075506946050', 2))
-# print(process_Entry('https://streamable.com/hv0o8i', 3))
+# Invalid URL:
+
+print(process_Entry('http://www.454fv8c.com/', 0))
+print(lookup_result(0))
+
+# Each video platform
+time.sleep(5)
+print(process_Entry('https://vimeo.com/735201', 1))
+print(lookup_result(1))
+
+time.sleep(5)
+print(process_Entry('https://twitter.com/i/status/1617131075506946050', 2))
+print(lookup_result(2))
+
+time.sleep(5)
+print(process_Entry('https://streamable.com/hv0o8i', 3))
+print(lookup_result(3))
+
+# Youtube case but file is too long/big
+
+time.sleep(5)
 print(process_Entry('https://www.youtube.com/watch?v=6Wlng1gEFuI', 4))
+print(lookup_result(4))
+
