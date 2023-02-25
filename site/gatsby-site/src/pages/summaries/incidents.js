@@ -8,7 +8,7 @@ import { StyledHeading, StyledMainWrapper } from 'components/styles/Docs';
 
 const ReportList = ({ items }) => {
   return (
-    <ul className="pl-8 leading-6 my-4">
+    <ul className="pl-8 leading-6 my-4 list-revert">
       {items.map((report) => (
         <li key={report.report_number} data-cy={`report-${report.report_number}`}>
           <a href={report.url}>{report.title}</a>
@@ -20,7 +20,7 @@ const ReportList = ({ items }) => {
 
 const IncidentList = ({ incidents }) => {
   return (
-    <>
+    <div data-cy="incident-list">
       {incidents.map((incident) => (
         <div key={incident.incident_id} data-cy={`incident-${incident.incident_id}`}>
           <h2>
@@ -39,7 +39,7 @@ const IncidentList = ({ incidents }) => {
           <ReportList items={incident.reports} />
         </div>
       ))}
-    </>
+    </div>
   );
 };
 
@@ -58,7 +58,7 @@ export default function Incidents({ data, ...props }) {
 
   return (
     <Layout {...props}>
-      <AiidHelmet>
+      <AiidHelmet path={props.location.pathname}>
         <title>Incident List</title>
       </AiidHelmet>
       <div className={'titleWrapper'}>

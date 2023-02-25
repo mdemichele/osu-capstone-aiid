@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Deepfake Incident Database</title>
+        <meta name="description" content="Political Deepfake Incident Database">
+        <link rel="stylesheet" href="main.css">
+        <script>
+            var sampleId = "DF0001";
+            var sampleDisplayMedia = "<img src='images/mediaSample.png'/>";
+            var sampleTitle = "How a deepfake Tom Cruise on TikTok turned into a very real AI company";
+            
+            var sampleDescription = "Despite the movie star hair, the eye-squinting and that trademark teeth-baring cackle, it wasn’t really Cruise. The 10 videos, which were posted between February and June, featured an artificial intelligence-generated doppelganger meant to look and sound like him. The deepfakes — a combination of the terms “deep learning” and “fake” — were created by visual and AI effects artist Chris Umé with the help of a Cruise stand-in, actor Miles Fisher.This ersatz Cruise was Despite the movie star hair, the eye-squinting and that trademark";
+            
+            var sampleStatus = "verified";
+            var sampleLocation = "United States";
+            
+            class DeepfakeCardHandler{
+                
+                constructor(){
+                    this.cards = [];
+                    
+                    //class name for css
+                    this.cardsID = "cardContainer";
+                }
+                
+                get numberOfCards(){
+                    return this.cards.length;
+                }
+                
+                addCard(card){
+                    this.cards.push({card});
+                }
+                
+                getCard(cardNum){
+                    return this.cards[cardNum].card;
+                }
+                
+                get allCards(){
+                    var cardString = "<div id='"+this.cardsID+"'>";
+                    this.cards.forEach(function(card){
+                        cardString += card.card.getFormatted;
+                    })
+                    cardString += "</div>";
+                    return cardString;
+                }
+            }
+            
+            class DeepfakeCard{
+                
+                constructor({id="undefined",
+                    displayMedia="none", 
+                    title="none", 
+                    description="undefined", 
+                    status="none", 
+                    location="undefined",}= {}){
+                    
+                    this.id = id;
+                    this.displayMedia = displayMedia;
+                    this.title = title;
+                    this.description = description;
+                    this.status = status;
+                    this.location = location;
+                    
+                    //class names for css
+                    this.mediaClass = "cardMedia";
+                    this.titleClass = "cardTitle";
+                    this.descriptionClass = "cardDescription";
+                    this.statusClass = "cardStatus";
+                    this.locationClass = "cardLocation";
+                    this.cardClass = "deepfakeCard";
+                }
+                
+                get divEncapsulatedMedia(){
+                    return this.encDiv(this.displayMedia, this.mediaClass);
+                }
+                
+                get divEncapsulatedTitle(){
+                    return this.encDiv(this.title, this.titleClass);
+                }
+                
+                get divEncapsulatedDescription(){
+                    return this.encDiv(this.description, this.descriptionClass);
+                }
+                
+                get divEncapsulatedStatus(){
+                    return this.encDiv(
+                        "Status: <span>"+this.status+"</span>", 
+                        this.statusClass);
+                }
+                
+                get divEncapsulatedLocation(){
+                    return this.encDiv(
+                        "Target's Location: "+this.location, 
+                        this.locationClass);
+                }
+                
+                get getFormatted(){
+                    return "<div onclick='#' class='"+this.cardClass+"'>"
+                        + this.divEncapsulatedMedia
+                        + this.divEncapsulatedTitle
+                        + this.divEncapsulatedDescription
+                        + this.divEncapsulatedStatus
+                        + this.divEncapsulatedLocation
+                        + "<div class='cardBottom'>Read Full Story</div>"
+                        +"</div>";
+                }
+                
+                //for testing
+                get allFields(){
+                    return this.encDiv(
+                    " id: "+this.id+
+                    " media: "+this.displayMedia+
+                    " title: "+this.title+
+                    " <br/> description: "+this.description+
+                    " status: "+this.status+
+                    " location: "+this.location, 
+                    "cardAll"
+                    );
+                }
+                
+                encDiv(object, divClass){
+                    return `<div class="${divClass}">${object}</div>`;
+                }
+            }
+            
+            function testFunc(){
+                var card1 = new DeepfakeCard({
+                    id: sampleId, 
+                    displayMedia: sampleDisplayMedia, 
+                    title: sampleTitle, 
+                    description: sampleDescription, 
+                    status: sampleStatus, 
+                    location:sampleLocation});
+
+                var card2 = new DeepfakeCard({
+                    id: sampleId, 
+                    displayMedia: "<img src='images/mediaSample2.png'/>", 
+                    title: sampleTitle, 
+                    description: sampleDescription, 
+                    status: sampleStatus, 
+                    location:sampleLocation});
+
+                
+                var cardHolder = new DeepfakeCardHandler();
+                var n = 3;
+                
+                for(let i=0; i < n; i++){
+                    cardHolder.addCard(card1);
+                }
+
+                cardHolder.addCard(card2);
+
+                document.write(cardHolder.allCards);
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tester">
+            - AIID TEST - 
+        </div>
+        <div id='mainContent'>
+            <script>
+                testFunc()
+            </script>
+        </div>
+        <div id="devInfo">
+            - Jhonatan Becerra - becerrjh@oregonstate.edu -  
+        </div>
+    </body>
+</html>
